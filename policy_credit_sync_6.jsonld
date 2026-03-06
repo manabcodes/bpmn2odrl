@@ -1,0 +1,246 @@
+{
+  "@context": {
+    "odrl": "http://www.w3.org/ns/odrl/2/",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "bpmn": "http://bpmn.io/schema/bpmn#",
+    "ex": "http://example.org/policy/"
+  },
+  "@type": "odrl:Set",
+  "@id": "ex:creditscoringPolicy",
+  "rdfs:label": "CreditScoring BPMN Policy",
+  "odrl:profile": {
+    "@id": "bpmn:BPMNDeonticProfile"
+  },
+  "odrl:permission": [
+    {
+      "@type": "odrl:Permission",
+      "@id": "ex:report_delay_l942o9",
+      "odrl:action": {
+        "@id": "bpmn:perform",
+        "rdfs:label": "report delay"
+      },
+      "odrl:assignee": {
+        "@id": "ex:credit_scoring_bank"
+      },
+      "odrl:constraint": [
+        {
+          "@type": "odrl:Constraint",
+          "odrl:leftOperand": {
+            "@id": "bpmn:gatewayCondition"
+          },
+          "odrl:operator": {
+            "@id": "odrl:eq"
+          },
+          "odrl:rightOperand": "score received? = no"
+        }
+      ]
+    }
+  ],
+  "odrl:obligation": [
+    {
+      "@type": "odrl:Duty",
+      "@id": "ex:request_credit_score_6winvj",
+      "odrl:action": {
+        "@id": "bpmn:perform",
+        "rdfs:label": "request credit score"
+      },
+      "odrl:assignee": {
+        "@id": "ex:credit_scoring_bank"
+      },
+      "odrl:constraint": [
+        {
+          "@type": "odrl:Constraint",
+          "odrl:leftOperand": {
+            "@id": "bpmn:messageReceived"
+          },
+          "odrl:operator": {
+            "@id": "odrl:eq"
+          },
+          "odrl:rightOperand": "messageFrom:scoring_service",
+          "rdfs:comment": "Wait for message from 'scoring service'."
+        }
+      ],
+      "odrl:duty": [
+        {
+          "@type": "odrl:Duty",
+          "odrl:action": {
+            "@id": "odrl:inform"
+          },
+          "odrl:assignee": {
+            "@id": "ex:scoring_service"
+          },
+          "rdfs:comment": "Notify 'scoring service' on completion."
+        }
+      ]
+    },
+    {
+      "@type": "odrl:Duty",
+      "@id": "ex:send_credit_score_fzfxey",
+      "odrl:action": {
+        "@id": "bpmn:perform",
+        "rdfs:label": "send credit score"
+      },
+      "odrl:assignee": {
+        "@id": "ex:credit_scoring_bank"
+      }
+    },
+    {
+      "@type": "odrl:Duty",
+      "@id": "ex:compute_credit_score_level_1_r15hqs",
+      "odrl:action": {
+        "@id": "bpmn:perform",
+        "rdfs:label": "compute credit score (level 1)"
+      },
+      "odrl:assignee": {
+        "@id": "ex:scoring_service"
+      }
+    },
+    {
+      "@type": "odrl:Duty",
+      "@id": "ex:send_result_4l4kzo",
+      "odrl:action": {
+        "@id": "bpmn:perform",
+        "rdfs:label": "send result"
+      },
+      "odrl:assignee": {
+        "@id": "ex:scoring_service"
+      },
+      "odrl:duty": [
+        {
+          "@type": "odrl:Duty",
+          "@id": "ex:compute_credit_score_level_1_r15hqs",
+          "rdfs:comment": "Must complete 'compute_credit_score_level_1_r15hqs' before this action."
+        },
+        {
+          "@type": "odrl:Duty",
+          "odrl:action": {
+            "@id": "odrl:inform"
+          },
+          "odrl:assignee": {
+            "@id": "ex:credit_scoring_bank"
+          },
+          "rdfs:comment": "Notify 'credit scoring (bank)' on completion."
+        }
+      ]
+    },
+    {
+      "@type": "odrl:Duty",
+      "@id": "ex:compute_credit_score_level_2_hd2ybe",
+      "odrl:action": {
+        "@id": "bpmn:perform",
+        "rdfs:label": "compute credit score (level 2)"
+      },
+      "odrl:assignee": {
+        "@id": "ex:scoring_service"
+      },
+      "odrl:constraint": [
+        {
+          "@type": "odrl:Constraint",
+          "odrl:leftOperand": {
+            "@id": "bpmn:gatewayCondition"
+          },
+          "odrl:operator": {
+            "@id": "odrl:eq"
+          },
+          "odrl:rightOperand": "score available? = no"
+        }
+      ]
+    },
+    {
+      "@type": "odrl:Duty",
+      "@id": "ex:send_credit_score_7vbn2i",
+      "odrl:action": {
+        "@id": "bpmn:perform",
+        "rdfs:label": "send credit score"
+      },
+      "odrl:assignee": {
+        "@id": "ex:scoring_service"
+      },
+      "odrl:constraint": [
+        {
+          "@type": "odrl:Constraint",
+          "odrl:leftOperand": {
+            "@id": "bpmn:gatewayCondition"
+          },
+          "odrl:operator": {
+            "@id": "odrl:eq"
+          },
+          "odrl:rightOperand": "score available? = no"
+        }
+      ],
+      "odrl:duty": [
+        {
+          "@type": "odrl:Duty",
+          "@id": "ex:compute_credit_score_level_2_hd2ybe",
+          "rdfs:comment": "Must complete 'compute_credit_score_level_2_hd2ybe' before this action."
+        },
+        {
+          "@type": "odrl:Duty",
+          "odrl:action": {
+            "@id": "odrl:inform"
+          },
+          "odrl:assignee": {
+            "@id": "ex:credit_scoring_bank"
+          },
+          "rdfs:comment": "Notify 'credit scoring (bank)' on completion."
+        }
+      ]
+    }
+  ],
+  "odrl:prohibition": [
+    {
+      "@type": "odrl:Prohibition",
+      "@id": "ex:credit_scoring_bank_prohibited",
+      "rdfs:comment": "Implicit prohibition: credit scoring (bank) may not perform tasks owned by other parties.",
+      "odrl:assignee": {
+        "@id": "ex:credit_scoring_bank"
+      },
+      "odrl:action": [
+        {
+          "@id": "bpmn:perform",
+          "rdfs:label": "compute credit score (level 1)"
+        },
+        {
+          "@id": "bpmn:perform",
+          "rdfs:label": "compute credit score (level 2)"
+        },
+        {
+          "@id": "bpmn:perform",
+          "rdfs:label": "send result"
+        }
+      ]
+    },
+    {
+      "@type": "odrl:Prohibition",
+      "@id": "ex:scoring_service_prohibited",
+      "rdfs:comment": "Implicit prohibition: scoring service may not perform tasks owned by other parties.",
+      "odrl:assignee": {
+        "@id": "ex:scoring_service"
+      },
+      "odrl:action": [
+        {
+          "@id": "bpmn:perform",
+          "rdfs:label": "report delay"
+        },
+        {
+          "@id": "bpmn:perform",
+          "rdfs:label": "request credit score"
+        }
+      ]
+    }
+  ],
+  "odrl:parties": [
+    {
+      "@type": "odrl:Party",
+      "@id": "ex:credit_scoring_bank",
+      "rdfs:label": "credit scoring (bank)"
+    },
+    {
+      "@type": "odrl:Party",
+      "@id": "ex:scoring_service",
+      "rdfs:label": "scoring service"
+    }
+  ]
+}
