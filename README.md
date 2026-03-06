@@ -27,9 +27,9 @@ An **ODRL Set Policy** in JSON-LD with three rule types per participant:
 
 | Rule type | Meaning |
 |---|---|
-| `odrl:obligation` (Duty) | Task that must be performed — no complete path through the process bypasses it |
-| `odrl:permission` (Permission) | Task that may be performed — at least one complete path skips it |
-| `odrl:prohibition` (Prohibition) | Tasks a role is forbidden from performing — they belong exclusively to another pool |
+| `odrl:obligation` (Duty) | Task that must be performed, no complete path through the process bypasses it |
+| `odrl:permission` (Permission) | Task that may be performed, at least one complete path skips it |
+| `odrl:prohibition` (Prohibition) | Tasks a role is forbidden from performing, they belong exclusively to another pool |
 
 ---
 
@@ -37,20 +37,20 @@ An **ODRL Set Policy** in JSON-LD with three rule types per participant:
 
 The code runs six stages in sequence.
 
-### Stage 1 — Parse BPMN XML
+### Stage 1: Parse BPMN XML
 Reads the XML and builds an in-memory directed graph.
 Extracts: tasks, gateways, events, sequence flows (with condition labels), message flows, participants, and swim-lane assignments.
 
-### Stage 2 — Tarjan SCC + DAG Root Discovery
+### Stage 2: Tarjan SCC + DAG Root Discovery
 
 **Tarjan SCC (iterative DFS):** Detects cycles in the BPMN graph. Each cycle is collapsed into a single meta-node, guaranteeing the output is a DAG. ODRL has no loop construct so cycles must be resolved before policy extraction.
 
 **In-degree scan:** Scans all edges to find nodes with no incoming edges. These are the entry points — one per pool/process.
 
-### Stage 3 — Dominance Tree (BFS + fixed-point iteration)
+### Stage 3: Dominance Tree (BFS + fixed-point iteration)
 Determines which tasks are structural preconditions for other tasks. Node A *dominates* node B if every path from the start to B passes through A. This produces the `after:` field in the output — a task cannot be reached without its dominator having been performed first.
 
-### Stage 4 — Deontic Classification (BFS per node)
+### Stage 4: Deontic Classification (BFS per node)
 Classifies each task as **Duty** or **Permission** using a reachability check:
 
 > For each task T: temporarily remove T from the graph and run BFS from start.
@@ -59,11 +59,11 @@ Classifies each task as **Duty** or **Permission** using a reachability check:
 
 This is semantically correct: it directly asks "can the process complete without this task?" rather than using an approximate heuristic like longest path.
 
-### Stage 5 — Role-Partitioned DFS (path-aware condition accumulation)
+### Stage 5: Role-Partitioned DFS (path-aware condition accumulation)
 Traverses every execution path through each pool, accumulating gateway conditions per task.
 
 **Key design decisions:**
-- One rule per task — conditions from all paths are **unioned**
+- One rule per task: conditions from all paths are **unioned**
 - A task reachable unconditionally on any path → unconditional overall
 - XOR gateway conditions are qualified: `"score available? = no"` not just `"no"`
 - Event-Based gateway conditions use the catch event name: `"event: delay information received"`
@@ -71,7 +71,7 @@ Traverses every execution path through each pool, accumulating gateway condition
 
 **Implicit prohibitions** are then derived: for each participant, one compact `odrl:Prohibition` lists all tasks belonging exclusively to other participants. This produces **M prohibitions** (one per role), not M×N individual rules.
 
-### Stage 6 — ODRL JSON-LD Emission
+### Stage 6: ODRL JSON-LD Emission
 Assembles the final policy document:
 - One `odrl:Set` policy per BPMN collaboration
 - Obligations, permissions, and prohibitions per participant
