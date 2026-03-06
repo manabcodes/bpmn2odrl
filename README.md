@@ -123,4 +123,4 @@ This pipeline is the first published approach to combine:
 - Reachability-based Duty/Permission classification (vs. prior longest-path heuristics)
 - Compact implicit prohibition generation
 
-Closest related work: Roy et al. (2018) BPMN+SWRL; Skersys et al. (2022) BPMN→SBVR; Kowalski & Datoo (2022) Logical English for contracts.
+Closest related work: Annane et al. (2019) BBO: BPMN 2.0 Based Ontology for Business Process Representation; Roy et al. (2018) Modeling industrial business processes for querying and retrieving using OWL+SWRL; Skersys et al. (2022) Transforming BPMN Processes to SBVR Process Rules with Deontic Modalities; Kowalski & Datoo (2022) Logical English meets legal English for swaps and derivatives; Natschläger (2021) Deontic BPMN.
