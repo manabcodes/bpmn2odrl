@@ -9,14 +9,14 @@ Use **https://demo.bpmn.io/** — drag and drop any `.bpmn` file directly into t
 ## Running the Code
 
 ```bash
-python3 bpmn2odrl8.py credit-scoring-asynchronous.bpmn -o policy_credit_async.jsonld --verbose
+python3 bpmn2odrl9.py credit-scoring-asynchronous.bpmn -o policy_credit_async.jsonld --verbose
 ```
 
 Generates an ODRL JSON-LD policy file from any BPMN XML input.
 
 **General usage:**
 ```bash
-python3 bpmn2odrl8.py <input.bpmn> -o <output.jsonld> [--verbose]
+python3 bpmn2odrl9.py <input.bpmn> -o <output.jsonld> [--verbose]
 ```
 
 ---
